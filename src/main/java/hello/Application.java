@@ -141,12 +141,12 @@ public class Application {
     }
 
     public String goToMiddle(Integer selfY, Integer height) {
-        Integer desiredX = height / 2;
-        System.out.println(desiredX);
-        if (selfY > desiredX) {
+        Integer desiredY = height / 2;
+        System.out.println(desiredY);
+        if (selfY < desiredY) {
             System.out.println("DOWN");
             return "DOWN";
-        } else if (selfY < desiredX) {
+        } else if (selfY > desiredY) {
             System.out.println("UP");
 
             return "UP";
