@@ -1,5 +1,7 @@
 package hello;
 
+import com.google.cloud.bigquery.storage.v1.AppendRowsResponse;
+import com.google.cloud.bigquery.storage.v1.JsonStreamWriter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.WebDataBinder;
@@ -14,13 +16,16 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.time.Instant;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicReference;
 
 @SpringBootApplication
 @RestController
 public class Application {
+
     static class WriteCommittedStream {
 
         final JsonStreamWriter jsonStreamWriter;
@@ -73,7 +78,6 @@ public class Application {
     public Application() throws Descriptors.DescriptorValidationException, IOException, InterruptedException {
         writeCommittedStream = new WriteCommittedStream(projectId, datasetName, tableName);
     }
-
     static class Self {
         public String href;
     }
@@ -88,6 +92,16 @@ public class Application {
         public String direction;
         public Boolean wasHit;
         public Integer score;
+    }
+
+    static class Cordinates {
+        public Integer x;
+        public Integer y;
+
+        public Cordinates(Integer x, Integer y) {
+            this.x = x;
+            this.y = y;
+        }
     }
 
     static class Arena {
@@ -125,6 +139,8 @@ public class Application {
         Integer SelfY = arenaUpdate.arena.state.get(selfUrl).y;
         String direction = arenaUpdate.arena.state.get(selfUrl).direction;
         String currentLeftRight = checkIfNewCurrentLeftRight(SelfX, width);
+
+        String possibleTrow = checkForOpponent(arenaUpdate.arena.state, selfUrl);
 
 
         String middleCommand = goToMiddle(SelfY, height);
@@ -168,6 +184,7 @@ public class Application {
         }
         return "R";
     }
+
     public String goUp(String direction) {
         switch (direction) {
             case "N":
@@ -179,9 +196,10 @@ public class Application {
         }
         return "R";
     }
-    public String leftOrRight(String direction, String currentLeftRight){
 
-        if (currentLeftRight.equals("R")){
+    public String leftOrRight(String direction, String currentLeftRight) {
+
+        if (currentLeftRight.equals("R")) {
             switch (direction) {
                 case "E":
                     return "F";
@@ -193,7 +211,7 @@ public class Application {
                     return "R";
             }
         }
-        if (currentLeftRight.equals("L")){
+        if (currentLeftRight.equals("L")) {
             switch (direction) {
                 case "W":
                     return "F";
@@ -207,13 +225,61 @@ public class Application {
         }
         return "T";
     }
-    public String checkIfNewCurrentLeftRight(Integer selfX, Integer width){
-        if (selfX > width /2){
+
+    public String checkIfNewCurrentLeftRight(Integer selfX, Integer width) {
+        if (selfX > width / 2) {
             String[] poss = {"R", "L", "L"};
             return poss[new Random().nextInt(poss.length)];
         }
         String[] poss = {"R", "R", "L"};
         return poss[new Random().nextInt(poss.length)];
+    }
+
+    String checkForOpponent(Map<String, PlayerState> state, String selfUrl) {
+        Integer SelfX = state.get(selfUrl).x;
+        Integer SelfY = state.get(selfUrl).y;
+        String direction = state.get(selfUrl).direction;
+        state.remove(selfUrl);
+        List<Cordinates> possibleTargets = new ArrayList<>();
+
+        if (direction.equals("N")) {
+            for (int i = 1; i < 4; i++) {
+                Integer x = SelfX;
+                Integer y = SelfY + i;
+                possibleTargets.add(new Cordinates(x, y));
+            }
+        }
+        if (direction.equals("S")) {
+            for (int i = 1; i < 4; i++) {
+                Integer x = SelfX;
+                Integer y = SelfY - i;
+                possibleTargets.add(new Cordinates(x, y));
+            }
+        }
+        if (direction.equals("W")) {
+            for (int i = 1; i < 4; i++) {
+                Integer x = SelfX - i;
+                Integer y = SelfY;
+                possibleTargets.add(new Cordinates(x, y));
+            }
+        }
+        if (direction.equals("E")) {
+            for (int i = 1; i < 4; i++) {
+                Integer x = SelfX + i;
+                Integer y = SelfY;
+                possibleTargets.add(new Cordinates(x, y));
+            }
+        }
+//        state.keySet().stream().filter(enemy -> {
+//            possibleTargets
+//        })
+//        state.forEach((k, enemy) -> {
+//            possibleTargets.forEach(cordinates -> {
+//                if (cordinates.x == enemy.x && cordinates.y == enemy.y){
+//                }
+//            });
+//        });
+    return "D";
     }
 }
 
