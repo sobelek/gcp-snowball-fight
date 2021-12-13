@@ -62,18 +62,20 @@ public class Application {
         Integer SelfX = arenaUpdate.arena.state.get(selfUrl).x;
         Integer SelfY = arenaUpdate.arena.state.get(selfUrl).y;
         String direction = arenaUpdate.arena.state.get(selfUrl).direction;
-//        String currentLeftRight = checkIfNewCurrentLeftRight(SelfX, width);
+        String currentLeftRight = checkIfNewCurrentLeftRight(SelfX, width);
 
 
-//        String middleCommand = goToMiddle(SelfY, height);
-//        if (middleCommand == "DOWN") {
-//            return goDown(direction);
-//        } else if (middleCommand == "UP") {
-//            return goUp(direction);
-//        }
+        String middleCommand = goToMiddle(SelfY, height);
+        if (middleCommand == "DOWN") {
+            return goDown(direction);
+        } else if (middleCommand == "UP") {
+            return goUp(direction);
+        }
 
+        String leftRightCommand = leftOrRight(direction, currentLeftRight);
+        String[] command = {leftRightCommand, "T"};
+        return command[new Random().nextInt(command.length)];
 
-        return "T";
     }
 
     public String goToMiddle(Integer selfY, Integer height) {
@@ -106,7 +108,7 @@ public class Application {
         }
         return "R";
     }
-    public String leftOrRight(Integer selfX, Integer width, String direction, String currentLeftRight){
+    public String leftOrRight(String direction, String currentLeftRight){
 
         if (currentLeftRight == "R"){
             if (direction == "E"){
@@ -134,10 +136,11 @@ public class Application {
     }
     public String checkIfNewCurrentLeftRight(Integer selfX, Integer width){
         if (selfX > width /2){
-            String[] poss = {"R", "R", "L"};
+            String[] poss = {"R", "L", "L"};
             return poss[new Random().nextInt(poss.length)];
         }
-        return null;
+        String[] poss = {"R", "R", "L"};
+        return poss[new Random().nextInt(poss.length)];
     }
 }
 
