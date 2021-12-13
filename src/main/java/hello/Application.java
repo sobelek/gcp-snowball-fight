@@ -66,9 +66,9 @@ public class Application {
 
 
         String middleCommand = goToMiddle(SelfY, height);
-        if (middleCommand == "DOWN") {
+        if (middleCommand.equals("DOWN")) {
             return goDown(direction);
-        } else if (middleCommand == "UP") {
+        } else if (middleCommand.equals("UP")) {
             return goUp(direction);
         }
 
@@ -80,56 +80,67 @@ public class Application {
 
     public String goToMiddle(Integer selfY, Integer height) {
         Integer desiredX = height / 2;
+        System.out.println(desiredX);
         if (selfY > desiredX) {
+            System.out.println("DOWN");
             return "DOWN";
         } else if (selfY < desiredX) {
+            System.out.println("UP");
+
             return "UP";
+
         }
+        System.out.println("GOOD");
         return "GOOD";
+
     }
 
     public String goDown(String direction) {
-        if (direction == "S") {
-            return "F";
-        } else if (direction == "W") {
-            return "L";
-        } else if (direction == "E") {
-            return "R";
+        switch (direction) {
+            case "S":
+                return "F";
+            case "W":
+                return "L";
+            case "E":
+                return "R";
         }
         return "R";
     }
     public String goUp(String direction) {
-        if (direction == "N") {
-            return "F";
-        } else if (direction == "W") {
-            return "R";
-        } else if (direction == "E") {
-            return "L";
+        switch (direction) {
+            case "N":
+                return "F";
+            case "W":
+                return "R";
+            case "E":
+                return "L";
         }
         return "R";
     }
     public String leftOrRight(String direction, String currentLeftRight){
 
-        if (currentLeftRight == "R"){
-            if (direction == "E"){
-                return "F";
-            } else if (direction == "N"){
-                return "R";
-            } else if (direction == "S"){
-                return "L";
-            } else if(direction == "W"){
-                return "R";
+        if (currentLeftRight.equals("R")){
+            switch (direction) {
+                case "E":
+                    return "F";
+                case "N":
+                    return "R";
+                case "S":
+                    return "L";
+                case "W":
+                    return "R";
             }
         }
-        if (currentLeftRight == "L"){
-            if (direction == "W"){
-                return "F";
-            } else if (direction == "N"){
-                return "L";
-            } else if (direction == "S"){
-                return "R";
-            } else if(direction == "E"){
-                return "R";
+        if (currentLeftRight.equals("L")){
+            switch (direction) {
+                case "W":
+                    return "F";
+                case "N":
+                    return "L";
+                case "S":
+                    return "R";
+                case "E":
+                    return "R";
             }
         }
         return "T";
